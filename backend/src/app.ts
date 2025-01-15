@@ -10,7 +10,7 @@ import errorHandler from './middlewares/error-handler'
 import serveStatic from './middlewares/serverStatic'
 import routes from './routes'
 import rateLimit from 'express-rate-limit'
-import ExpressMongoSanitize from 'express-mongo-sanitize'
+import mongoSanitize from 'express-mongo-sanitize'
 
 const { PORT = 3000, ORIGIN_ALLOW = 'http://localhost:5173' } = process.env
 const app = express()
@@ -26,7 +26,7 @@ app.use(serveStatic(path.join(__dirname, 'public')))
 app.use(limiter)
 app.use(urlencoded({ extended: true }))
 app.use(json())
-app.use(ExpressMongoSanitize())
+app.use(mongoSanitize())
 app.options('*', cors())
 app.use(routes)
 app.use(errors())
