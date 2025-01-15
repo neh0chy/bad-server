@@ -1,7 +1,7 @@
+import { faker } from '@faker-js/faker'
 import { Request, Express } from 'express'
 import multer, { FileFilterCallback } from 'multer'
 import { extname, join } from 'path'
-import { v4 } from 'uuid'
 
 type DestinationCallback = (error: Error | null, destination: string) => void
 type FileNameCallback = (error: Error | null, filename: string) => void
@@ -25,14 +25,14 @@ const storage = multer.diskStorage({
 
     filename: (
         _req: Request,
-        _file: Express.Multer.File,
+        file: Express.Multer.File,
         cb: FileNameCallback
     ) => {
-        cb(null, v4().concat(extname(_file.originalname)))
+        cb(null, faker.string.uuid() + extname(file?.originalname))
     },
 })
 
-export const fileTypes = [
+const fileTypes = [
     'image/png',
     'image/jpg',
     'image/jpeg',
