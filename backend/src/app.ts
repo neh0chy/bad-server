@@ -15,12 +15,12 @@ const { PORT = 3000, ORIGIN_ALLOW = 'http://localhost:5173' } = process.env
 const app = express()
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    limit: 100,
+    limit: 30,
 })
 
 app.use(cookieParser())
 app.use(cors({ origin: ORIGIN_ALLOW, credentials: true }))
-// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(serveStatic(path.join(__dirname, 'public')))
 app.use(limiter)
