@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
 import fs from 'node:fs/promises'
 import BadRequestError from '../errors/bad-request-error'
+import { validateMimeType } from 'utils/validateMimeType'
 
 const fileTypes = [
     'image/png',
@@ -24,7 +25,8 @@ export const uploadFile = async (
         return next(new BadRequestError('Размер файла слишком маленький'))
     }
 
-    if (!fileTypes.includes(req.file.mimetype)) {
+    const mimeType = validateMimeType(req.file.path)
+    if (!mimeType || !fileTypes.includes(req.file.mimetype)) {
         await fs.unlink(req.file.path)
         return next(new BadRequestError('Данный тип файла не поддерживается'))
     }
