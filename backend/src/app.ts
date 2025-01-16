@@ -9,21 +9,23 @@ import { DB_ADDRESS } from './config'
 import errorHandler from './middlewares/error-handler'
 import serveStatic from './middlewares/serverStatic'
 import routes from './routes'
+import rateLimit from 'express-rate-limit'
+import mongoSanitize from 'express-mongo-sanitize'
 
-const { PORT = 3000 } = process.env
+const { PORT = 3000, ORIGIN_ALLOW = 'http://localhost:5173' } = process.env
 const app = express()
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 30,
+})
 
 app.use(cookieParser())
-
-app.use(cors())
-// app.use(cors({ origin: ORIGIN_ALLOW, credentials: true }));
-// app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cors({ origin: ORIGIN_ALLOW, credentials: true }))
 app.use(serveStatic(path.join(__dirname, 'public')))
-
+app.use(limiter)
 app.use(urlencoded({ extended: true }))
 app.use(json())
-
+app.use(mongoSanitize())
 app.options('*', cors())
 app.use(routes)
 app.use(errors())
